@@ -33,7 +33,7 @@ export function Navbar() {
   const { isAuthenticated, isLoading, logout, profile } = useAuth();
   const { itemCount, openCart } = useCart();
   const isHome = pathname === "/";
-  const homeReadableStyle = { color: "#ffffff" };
+  const homeReadableStyle = { color: "var(--foreground, #ffffff)" };
 
   function handleSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

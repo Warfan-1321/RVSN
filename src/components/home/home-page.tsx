@@ -373,6 +373,7 @@ function ApproachPinnedSection() {
       const cards = gsap.utils.toArray<HTMLElement>(".aww-approach-card", sticky);
       const imageMasks = gsap.utils.toArray<HTMLElement>(".aww-approach-card-image", sticky);
       const titles = gsap.utils.toArray<HTMLElement>(".aww-approach-card-title", sticky);
+      const eyebrow = sticky.querySelector<HTMLElement>(".aww-approach-eyebrow");
       const progressBars = progressRefs.current.filter(Boolean) as HTMLSpanElement[];
       const stage = sticky.querySelector<HTMLElement>(".aww-approach-stage");
       const isMobile = window.matchMedia("(max-width: 767px)").matches;
@@ -380,15 +381,17 @@ function ApproachPinnedSection() {
       section.style.setProperty("--approach-scroll-height", isMobile ? "220vh" : "330vh");
       ghost.textContent = "01";
 
-      gsap.set(".aww-approach-eyebrow", { opacity: 0, y: 18 });
+      gsap.set(eyebrow, { opacity: 0, y: 18 });
       gsap.set(wordNodes, { opacity: 0, y: 30, filter: "blur(10px)" });
-      gsap.set(cards, { opacity: 0.35, scale: 0.9, rotateY: -8, transformOrigin: "50% 55%" });
-      gsap.set(imageMasks, { clipPath: "inset(0% 0% 100% 0%)" });
+      gsap.set(cards, { opacity: 0.48, scale: 0.94, rotateY: -6, transformOrigin: "50% 55%" });
+      gsap.set(imageMasks, { clipPath: "inset(0% 0% 0% 0%)" });
       gsap.set(titles, { opacity: 0, y: 22 });
       gsap.set(progressBars, { scaleX: 0, transformOrigin: "left center" });
+      gsap.set(cards[0], { opacity: 1, scale: 1, rotateY: 0 });
+      gsap.set(titles[0], { opacity: 1, y: 0 });
 
       if (reduceMotion) {
-        gsap.set(".aww-approach-eyebrow", { opacity: 1, y: 0 });
+        gsap.set(eyebrow, { opacity: 1, y: 0 });
         gsap.set(wordNodes, { opacity: 1, y: 0, filter: "blur(0px)" });
         gsap.set(cards, { opacity: 1, scale: 1, rotateY: 0 });
         gsap.set(imageMasks, { clipPath: "inset(0% 0% 0% 0%)" });
@@ -414,14 +417,42 @@ function ApproachPinnedSection() {
 
       const getTrackX = () => {
         if (!stage) return 0;
+        if (isMobile) {
+          const lastCard = cards[cards.length - 1];
+          const trackBounds = track.getBoundingClientRect();
+          const cardBounds = lastCard?.getBoundingClientRect();
+
+          if (!lastCard || !cardBounds) return 0;
+
+          const targetInset = 18;
+          return -(cardBounds.left - trackBounds.left - targetInset);
+        }
+
         return -Math.max(0, track.scrollWidth - stage.clientWidth);
       };
+
+      const introTimeline = gsap.timeline({
+        defaults: { ease: "power2.out" },
+        scrollTrigger: {
+          trigger: section,
+          start: "top 92%",
+          end: "top 38%",
+          scrub: isMobile ? 0.45 : 0.6,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      introTimeline
+        .to(eyebrow, { opacity: 1, y: 0, duration: 0.2 }, 0)
+        .to(wordNodes, { opacity: 1, y: 0, filter: "blur(0px)", stagger: 0.04, duration: 0.5 }, 0.08)
+        .to(cards[0], { opacity: 1, scale: 1, rotateY: 0, duration: 0.28 }, 0.34)
+        .to(titles[0], { opacity: 1, y: 0, duration: 0.22 }, 0.42);
 
       const timeline = gsap.timeline({
         defaults: { ease: "power2.out" },
         scrollTrigger: {
           trigger: section,
-          start: "top top",
+          start: "top 4%",
           end: () => `+=${Math.max(1, section.offsetHeight - window.innerHeight)}`,
           pin: sticky,
           pinSpacing: false,
@@ -433,12 +464,10 @@ function ApproachPinnedSection() {
       });
 
       timeline
-        .to(".aww-approach-eyebrow", { opacity: 1, y: 0, duration: 0.22 }, 0)
-        .to(wordNodes, { opacity: 1, y: 0, filter: "blur(0px)", stagger: 0.04, duration: 0.46 }, 0.08)
-        .to(track, { x: getTrackX, ease: "none", duration: 2.15 }, 0.62);
+        .to(track, { x: getTrackX, ease: "none", duration: 2.15 }, 0.12);
 
       cards.forEach((card, index) => {
-        const start = 0.7 + index * 0.44;
+        const start = 0.18 + index * 0.46;
         const rotation = index % 2 === 0 ? -7 : 7;
 
         timeline
