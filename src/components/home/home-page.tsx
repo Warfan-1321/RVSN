@@ -214,10 +214,10 @@ export function HomePage() {
 
         <div className="aww-hero-copy">
           <motion.p custom={0} variants={lineReveal} initial="hidden" animate="show" className="aww-eyebrow overflow-hidden">
-            RVSN football studio
+            RVSN football store
           </motion.p>
           <h1 className="aww-hero-title">
-            {["RVSN is a premium", "football store in motion.", "We shape kits, boots and club drops", "with cinematic precision."].map(
+            {["Made for", "your game."].map(
               (line, index) => (
                 <span key={line} className={index > 1 ? "text-white/38" : undefined}>
                   <motion.span custom={index + 1} variants={lineReveal} initial="hidden" animate="show" className="block">
@@ -227,6 +227,7 @@ export function HomePage() {
               ),
             )}
           </h1>
+          <p className="aww-hero-description">Club jerseys, football boots, and training essentials. Find your next matchday favourite.</p>
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 1.05, ease }}>
             <Link href="/products" className="aww-cta aww-hero-cta">
               Shop the drop <span />
@@ -240,7 +241,7 @@ export function HomePage() {
 
       <section id="services" className="aww-light-section">
         <motion.p variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-8%" }} className="aww-section-eyebrow">
-          Our services
+          Shop by category
         </motion.p>
         <div className="aww-service-grid">
           {serviceTiles.map((tile, index) => (
